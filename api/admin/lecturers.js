@@ -40,9 +40,12 @@ function cleanName(value, max) {
 export default async function (req, res) {
   if (req.method === "GET") {
     const result = await db.query(
-      "SELECT lecturer_id, full_name, department, active, created_at, updated_at FROM lecturer_accounts ORDER BY created_at DESC"
+      "SELECT lecturer_id, full_name, department, active, must_change_password, created_at, updated_at FROM lecturer_accounts ORDER BY created_at DESC"
     );
-    return res.json({ lecturers: result.rows });
+    const resetRequests = await db.query(
+      "SELECT r.request_id, r.lecturer_id, a.full_name, a.department, r.requested_at FROM lecturer_password_reset_requests r JOIN lecturer_accounts a ON a.lecturer_id = r.lecturer_id WHERE r.status = 'pending' ORDER BY r.requested_at ASC"
+    );
+    return res.json({ lecturers: result.rows, resetRequests: resetRequests.rows });
   }
 
   const body = req.body || {};
@@ -72,12 +75,25 @@ export default async function (req, res) {
   const exists = await db.query("SELECT lecturer_id FROM lecturer_accounts WHERE lecturer_id = $1", [lecturerId]);
   if (!exists.rows.length) return res.status(404).json({ error: "Lecturer account not found." });
 
+  if (action === "resolve-reset") {
+    const requestId = cleanName(body.requestId, 100);
+    const request = await db.query("SELECT request_id, lecturer_id FROM lecturer_password_reset_requests WHERE request_id = $1 AND status = 'pending'", [requestId]);
+    if (!request.rows.length || request.rows[0].lecturer_id !== lecturerId) return res.status(404).json({ error: "Pending reset request not found." });
+    const password = randomPassword();
+    const salt = randomHex(16);
+    const hash = await passwordHash(password, salt);
+    await db.query("UPDATE lecturer_accounts SET password_salt = $2, password_hash = $3, must_change_password = TRUE, updated_at = now() WHERE lecturer_id = $1", [lecturerId, salt, hash]);
+    await db.query("DELETE FROM lecturer_sessions WHERE lecturer_id = $1", [lecturerId]);
+    await db.query("UPDATE lecturer_password_reset_requests SET status = 'resolved', resolved_at = now() WHERE request_id = $1", [requestId]);
+    return res.json({ ok: true, lecturerId, temporaryPassword: password, message: "Reset issued. Share this temporary password securely; the lecturer must change it at next sign-in." });
+  }
+
   if (action === "reset-password") {
     const password = randomPassword();
     const salt = randomHex(16);
     const hash = await passwordHash(password, salt);
     await db.query(
-      "UPDATE lecturer_accounts SET password_salt = $2, password_hash = $3, updated_at = now() WHERE lecturer_id = $1",
+      "UPDATE lecturer_accounts SET password_salt = $2, password_hash = $3, must_change_password = TRUE, updated_at = now() WHERE lecturer_id = $1",
       [lecturerId, salt, hash]
     );
     await db.query("DELETE FROM lecturer_sessions WHERE lecturer_id = $1", [lecturerId]);
