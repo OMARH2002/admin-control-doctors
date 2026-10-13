@@ -75,6 +75,14 @@ export default async function (req, res) {
   const exists = await db.query("SELECT lecturer_id FROM lecturer_accounts WHERE lecturer_id = $1", [lecturerId]);
   if (!exists.rows.length) return res.status(404).json({ error: "Lecturer account not found." });
 
+  if (action === "cancel-reset") {
+    const requestId = cleanName(body.requestId, 100);
+    const request = await db.query("SELECT request_id, lecturer_id FROM lecturer_password_reset_requests WHERE request_id = $1 AND status = 'pending'", [requestId]);
+    if (!request.rows.length || request.rows[0].lecturer_id !== lecturerId) return res.status(404).json({ error: "Pending reset request not found." });
+    await db.query("UPDATE lecturer_password_reset_requests SET status = 'cancelled', resolved_at = now() WHERE request_id = $1", [requestId]);
+    return res.json({ ok: true, lecturerId, cancelled: true, message: "Password reset request cancelled. The lecturer's password was not changed." });
+  }
+
   if (action === "resolve-reset") {
     const requestId = cleanName(body.requestId, 100);
     const request = await db.query("SELECT request_id, lecturer_id FROM lecturer_password_reset_requests WHERE request_id = $1 AND status = 'pending'", [requestId]);
