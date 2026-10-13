@@ -84,6 +84,12 @@ export default async function (req, res) {
     return res.json({ ok: true, lecturerId, temporaryPassword: password, message: "Save this new password now. Previous sessions have been revoked." });
   }
 
+  if (action === "delete") {
+    await db.query("DELETE FROM lecturer_sessions WHERE lecturer_id = $1", [lecturerId]);
+    await db.query("DELETE FROM lecturer_accounts WHERE lecturer_id = $1", [lecturerId]);
+    return res.json({ ok: true, lecturerId, deleted: true });
+  }
+
   if (action === "disable" || action === "enable") {
     const active = action === "enable";
     await db.query("UPDATE lecturer_accounts SET active = $2, updated_at = now() WHERE lecturer_id = $1", [lecturerId, active]);
