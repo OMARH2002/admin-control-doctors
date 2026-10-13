@@ -1,0 +1,5 @@
+# Hatchable project manifest. This file marks the folder as a
+# Hatchable project and declares the services it uses.
+# Reference: https://hatchable.com/docs/developers/config
+name = "Lecturer Attendance Admin"
+description = "Secure administration portal for issuing lecturer IDs and passwords and synchronizing lecturer accounts with the Offline QR Attendance app."
