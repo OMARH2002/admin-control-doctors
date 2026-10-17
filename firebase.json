@@ -1,0 +1,12 @@
+{
+  "hosting": {
+    "site": "lecturer-attendance-admin",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "cleanUrls": true
+  }
+}
