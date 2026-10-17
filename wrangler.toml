@@ -1,0 +1,8 @@
+name = "lecturer-admin-api"
+main = "worker/index.js"
+compatibility_date = "2026-10-17"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "lecturer-admin-db"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
