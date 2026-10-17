@@ -5,4 +5,4 @@ compatibility_date = "2026-10-17"
 [[d1_databases]]
 binding = "DB"
 database_name = "lecturer-admin-db"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "bb44816a-ac2a-4696-b447-be8f68442975"
