@@ -1,0 +1,36 @@
+name: Deploy admin console to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - firebase-migration
+    paths:
+      - "public/**"
+      - "firebase.json"
+      - ".github/workflows/firebase-hosting-admin.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy-admin-hosting:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out migration branch
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Authenticate with Firebase service account
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ADMIN_LECT }}
+        run: |
+          node -e 'require("fs").writeFileSync(process.env.RUNNER_TEMP + "/firebase-service-account.json", process.env.FIREBASE_SERVICE_ACCOUNT, { mode: 0o600 })'
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$RUNNER_TEMP/firebase-service-account.json" >> "$GITHUB_ENV"
+
+      - name: Deploy configured admin Hosting site only
+        run: npx --yes firebase-tools deploy --only hosting --project admin-lect
