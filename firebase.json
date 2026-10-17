@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "site": "lecturer-attendance-admin",
+    "site": "admin-lect",
     "public": "public",
     "ignore": [
       "firebase.json",
