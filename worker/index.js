@@ -1,4 +1,4 @@
-const ITERATIONS = 210000;
+const ITERATIONS = 100000;
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_";
 const ADMIN_ORIGINS = new Set([
   "https://admin-lect.web.app",
