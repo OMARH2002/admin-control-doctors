@@ -2,7 +2,9 @@ const ITERATIONS = 210000;
 const ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%*-_";
 const ADMIN_ORIGINS = new Set([
   "https://admin-lect.web.app",
-  "https://admin-lect.firebaseapp.com"
+  "https://admin-lect.firebaseapp.com",
+  "https://lecturer-attendance-admin.web.app",
+  "https://lecturer-attendance-admin.firebaseapp.com"
 ]);
 const LECTURER_ORIGINS = new Set([
   "https://offline-qr.hatchable.site",
