@@ -4,6 +4,7 @@ export const access = "public";
 export const methods = ["GET", "POST", "OPTIONS"];
 
 const ALLOWED_ORIGINS = new Set([
+  "https://admin-lect.web.app",
   "https://lecturer-offline-qr.web.app"
 ]);
 const SESSION_DAYS = 30;
