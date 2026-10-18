@@ -43,7 +43,7 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const auth = getAuth(firebaseApp);
 (function(){
- const API="https://lecturer-admin-api.amorahany36002.workers.dev/api/admin/lecturers";let lecturers=[];let resetRequests=[];let latestCredential=null;
+ const API="https://lecturer-central-api.amorahany36002.workers.dev/api/admin/lecturers";let lecturers=[];let resetRequests=[];let latestCredential=null;
  const $=id=>document.getElementById(id);
  function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
  function status(id,msg,kind){const el=$(id);el.textContent=msg;el.className="status"+(kind?" "+kind:"")}
